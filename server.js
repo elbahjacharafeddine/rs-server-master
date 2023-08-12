@@ -44,4 +44,8 @@ app.get("/test", (req, resp) => {
   resp.status(200).send(jwt.decode(token));
 });
 
+app.get('/test-backend',(req, res) =>{
+    res.send("api is running ...")
+})
+
 
