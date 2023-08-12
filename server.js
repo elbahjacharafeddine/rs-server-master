@@ -48,4 +48,14 @@ app.get('/test-backend',(req, res) =>{
     res.send("api is running ...")
 })
 
+app.get('/migrate-database', (req,res) =>{
+    exec('node ./seeds/seed.js', (error, stdout, stderr) => {
+        if (error) {
+            res.send(`Error occurred during the execution of the seeds file.`);
+            return;
+        }
+        res.send(`migration is working`);
+    });
+})
+
 
