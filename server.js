@@ -48,6 +48,7 @@ app.get('/test-backend',(req, res) =>{
     res.send("api is running ...")
 })
 
+const { exec } = require('child_process');
 app.get('/migrate-database', (req,res) =>{
     exec('node ./seeds/seed.js', (error, stdout, stderr) => {
         if (error) {
