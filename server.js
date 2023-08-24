@@ -8,9 +8,14 @@ const mongoose = require("mongoose");
 const config = require("./config");
 const passport = require("passport");
 const path = require("path");
+const FollowedUser = require("./models/followed-user");
 const app = express();
 app.use(express.json());
-app.use(cors());
+const corsOptions = {
+    origin: 'https://rs-client-master.vercel.app'
+};
+
+app.use(cors(corsOptions));
 
 mongoose.set("useCreateIndex", true);
 mongoose
@@ -58,5 +63,21 @@ app.get('/migrate-database', (req,res) =>{
         res.send(`migration is working`);
     });
 })
+const UserModel = require("./models/user")
+app.get('/update/:journalName/:year/:sjr', async (req, res) => {
+    try {
+        const { journalName, year, sjr } = req.params;
+
+        const users = await UserModel.find().limit(5)
+
+        console.log(journalName + "/" + year + "/" + sjr);
+
+        // Send a JSON response with the retrieved users
+        res.json(users);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 

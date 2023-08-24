@@ -304,7 +304,7 @@ exports.updateProfilePicture = async (req, resp) => {
 
 
 exports.addPub = async (req, resp) => {
-  const { idAuthor, title, year, citation, source, IF, SJR } = req.body;
+  let { idAuthor, title, year, citation, source, IF, SJR } = req.body;
   if (citation == "") {
     citation = 0;
   }
