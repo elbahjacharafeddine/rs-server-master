@@ -60,6 +60,16 @@ UserSchema.methods.isValidPassword = async function (password) {
   const compare = await bcrypt.compare(password, user.password);
   return compare;
 };
+UserSchema.statics.getAllUsers = async function () {
+  try {
+    const users = await this.find(); // Exclude password field from the results
+
+    return users;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 
 const UserModel = mongoose.model("user", UserSchema);
 

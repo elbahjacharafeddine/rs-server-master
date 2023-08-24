@@ -47,6 +47,7 @@ exports.updateUser = async (req, resp) => {
 };
 
 exports.findUser = async (req, resp) => {
+
   const user = await User.findOne({ _id: req.params._id });
 
   const laboratoriesHeaded = await Laboratory.find({
