@@ -95,32 +95,24 @@ app.get('/update/:journalName/:year/:sjr', async (req, res) => {
 });
 
 
-const Establishment = require("./models/establishment");
-const { MongoClient } = require('mongodb');
-app.get('/show-users', async (req, res) => {
-
-    await runQuery(res);
-
+const amqp = require('amqplib/callback_api')
+app.get('/listen-to-rabbit',(req, res) =>{
+    amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
+        if (error0){
+            throw error0
+        }
+        console.log("connected to RabbitMQ ...")
+        connection.createChannel((error1, channel) =>{
+            if (error1) {
+                throw error1
+            }
+            console.log('try to read the message')
+            channel.assertQueue('elbahja_cle',{durable:false})
+            channel.consume('elbahja_cle', (message) =>{
+                // const jsonList = message.content.toString(); // Convertir l'objet Buffer en chaîne
+                // const listOfObjects = JSON.parse(jsonList);
+                console.log(message.content.toString('utf8'));
+            })
+        })
+    })
 })
-
-const uri = "mongodb+srv://charafensaj:dnASSHXXirM8mFDL@cluster0.tljv2nd.mongodb.net/rs-backend";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-async function runQuery(res) {
-    try {
-        await client.connect();
-        console.log('Connected to the database');
-
-        const database = client.db('research-activities-db'); // Remplacez par le nom de votre base de données
-        const collection = database.collection('users'); // Remplacez par le nom de votre collection
-
-        const query = {}; // Une requête vide pour charger tous les utilisateurs
-        const users = await collection.find().toArray();
-        console.log('All users:', users);
-        res.json(users)
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
-        await client.close();
-    }
-}
