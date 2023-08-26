@@ -53,7 +53,7 @@ app.use("/pictures", express.static(__dirname + "/public/images"));
 
 app.use(
   "/api",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   require("./routes/api")
 );
 
@@ -114,5 +114,9 @@ app.get('/listen-to-rabbit',(req, res) =>{
                 console.log(message.content.toString('utf8'));
             })
         })
+    })
+    process.on('beforeExit',() =>{
+        console.log("closed the connection RabbitMQ")
+
     })
 })

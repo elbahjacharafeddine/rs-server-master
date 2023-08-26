@@ -403,7 +403,7 @@ exports.addSJR = async ( req, resp)=>{
   const {id,IF,SJR,title } = req.body;
   
   try{
-    const response = await FollowedUser.updateOne({user_id:id, "publications.title":title},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true,"publications.$.IF":IF}});
+    const response = await FollowedUser.updateOne({"publications.title":title},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
     console.log("=====================================")
     console.log(response);
     resp.status(200).send(response);
