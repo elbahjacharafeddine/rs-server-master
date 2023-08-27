@@ -96,6 +96,11 @@ app.get('/update/:journalName/:year/:sjr', async (req, res) => {
 
 
 const amqp = require('amqplib/callback_api')
+const {getFollowedUsers} = require("./controllers/UserController");
+const Laboratory = require("./models/laboratory");
+const Team = require("./models/team");
+const TeamMemberShip = require("./models/team-membership");
+const User = require("./models/user");
 app.get('/listen-to-rabbit',(req, res) =>{
     amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
         if (error0){
@@ -112,6 +117,7 @@ app.get('/listen-to-rabbit',(req, res) =>{
                 // const jsonList = message.content.toString(); // Convertir l'objet Buffer en chaîne
                 // const listOfObjects = JSON.parse(jsonList);
                 console.log(message.content.toString('utf8'));
+                // res.send(message.content.toString('utf-8'))
             })
         })
     })
@@ -119,4 +125,86 @@ app.get('/listen-to-rabbit',(req, res) =>{
         console.log("closed the connection RabbitMQ")
 
     })
+})
+
+
+
+
+
+
+
+app.get('/get-follower-users', async (req, resp) =>{
+    // const laboratoryAbbreviation = req.params("laboratory_abbreviation");
+    // const teamAbbreviation = req.params("team_abbreviation");
+    // const {laboratoryAbbreviation, teamAbbreviation} = {"LTI","TOA"}
+    const laboratoryAbbreviation = 'LTI';
+    const teamAbbreviation = 'TOA'
+    console.log(laboratoryAbbreviation, teamAbbreviation)
+    const followedUsers = await FollowedUser.find();
+    console.log('followed users are : '+followedUsers)
+    const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
+    console.log('followed users are : '+followedUsersIds)
+
+    if (!laboratoryAbbreviation && !teamAbbreviation) {
+        resp.status(200).send(await FollowedUser.find());
+    }
+
+    if (laboratoryAbbreviation) {
+        const laboratory = await Laboratory.findOne({
+            // abbreviation: req.param("laboratory_abbreviation"),
+            abbreviation : laboratoryAbbreviation
+        });
+        console.log(laboratory)
+
+
+        const teams = await Team.find({
+            laboratory_id: laboratory._id,
+        });
+
+        const teamsMemberShips = await Promise.all(
+            teams.map((team) =>
+                TeamMemberShip.find({
+                    team_id: team._id,
+                    active: true,
+                    user_id: { $in: followedUsersIds },
+                })
+            )
+        );
+
+        const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => FollowedUser.findOne({ user_id })));
+
+        const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
+
+        const result = followedUsersAcounts.map(({ firstName, lastName, roles,profilePicture }, index) => ({
+            ...followedUsers[index]._doc,
+            firstName,
+            lastName,
+            roles,
+            profilePicture
+        }));
+        resp.status(200).send(result);
+    }
+
+    if (teamAbbreviation) {
+        const team = await Team.findOne({
+            abbreviation: teamAbbreviation,
+        });
+
+        const teamsMemberShips = await TeamMemberShip.find({
+            team_id: team._id,
+            active: true,
+            user_id: { $in: followedUsersIds },
+        });
+
+        const followedUsers = await Promise.all(teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id })));
+
+        const followedUsersAcounts = await Promise.all(teamsMemberShips.map(({ user_id }) => User.findById(user_id)));
+
+        const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
+            ...followedUsers[index]._doc,
+            firstName,
+            lastName,
+        }));
+        resp.status(200).send(result);
+    }
 })
