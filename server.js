@@ -181,7 +181,7 @@ app.get('/get-followed-users',async (req, resp) => {
             lastName:e.lastName,
             roles :e.roles,
         }));
-        resp.status(200).send(r);
+        resp.status(200).send(result);
     }
 
     if (teamAbbreviation) {
