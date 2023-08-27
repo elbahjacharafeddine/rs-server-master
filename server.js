@@ -53,7 +53,7 @@ app.use("/pictures", express.static(__dirname + "/public/images"));
 
 app.use(
   "/api",
-  // passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   require("./routes/api")
 );
 
