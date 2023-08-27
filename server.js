@@ -147,7 +147,7 @@ app.get('/get-followed-users',async (req, resp) => {
 
     if (laboratoryAbbreviation) {
         const laboratory = await Laboratory.findOne({
-            abbreviation: req.param("laboratory_abbreviation"),
+            abbreviation: laboratoryAbbreviation,
         });
 
         const teams = await Team.find({
