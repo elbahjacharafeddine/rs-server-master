@@ -169,13 +169,19 @@ app.get('/get-followed-users',async (req, resp) => {
         const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
 
         const result = followedUsersAcounts.map(({ firstName, lastName, roles,profilePicture }, index) => ({
-            ...followedUsers[index]._doc.authorId,
+            ...followedUsers[index]._doc,
             firstName,
             lastName,
             roles,
             profilePicture
         }));
-        resp.status(200).send(result);
+        const r = result.map((e, i) => ({
+            authorId: e.authorId,
+            firstName:e.firstName,
+            lastName:e.lastName,
+            roles :e.roles,
+        }));
+        resp.status(200).send(r);
     }
 
     if (teamAbbreviation) {
@@ -194,7 +200,7 @@ app.get('/get-followed-users',async (req, resp) => {
         const followedUsersAcounts = await Promise.all(teamsMemberShips.map(({ user_id }) => User.findById(user_id)));
 
         const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
-            ...followedUsers[index]._doc.authorId,
+            ...followedUsers[index]._doc,
             firstName,
             lastName,
         }));
