@@ -403,10 +403,12 @@ exports.addSJR = async ( req, resp)=>{
   const {id,year,SJR,title } = req.body;
   
   try{
-    const response = await FollowedUser.updateOne({"publications.title":title,"publication.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
+
+    const response = await FollowedUser.updateOne({"user_id":id,"publications.title":title, "publication.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
+    const ress = await FollowedUser.find({"user_id":id,"publications.title":title, "publication.year":year})
     console.log("=====================================")
     console.log(response);
-    resp.status(200).send(response);
+    resp.status(200).send(ress);
   }catch(error){
     console.log(error);
     resp.status(500).send(error);
