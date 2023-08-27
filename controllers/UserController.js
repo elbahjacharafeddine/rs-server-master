@@ -189,8 +189,8 @@ exports.isFollowing = async (req, resp) => {
 exports.getFollowedUsers = async (req, resp) => {
   const laboratoryAbbreviation = req.param("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
-  console.log("laboratoryAbbreviation is :"+ laboratoryAbbreviation)
-  console.log("teamAbbreviation is :"+ teamAbbreviation)
+  // console.log("laboratoryAbbreviation is :"+ laboratoryAbbreviation)
+  // console.log("teamAbbreviation is :"+ teamAbbreviation)
 
   const followedUsers = await FollowedUser.find();
   // console.log('followed user are :' +followedUsers)
