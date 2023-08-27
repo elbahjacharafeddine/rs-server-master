@@ -131,80 +131,73 @@ app.get('/listen-to-rabbit',(req, res) =>{
 
 
 
+app.get('/get-followed-users',async (req, resp) => {
+    const laboratoryAbbreviation = "LTI"
+    const teamAbbreviation = undefined;
+    console.log("laboratoryAbbreviation is :"+ laboratoryAbbreviation)
+    console.log("teamAbbreviation is :"+ teamAbbreviation)
 
+    const followedUsers = await FollowedUser.find();
+    // console.log('followed user are :' +followedUsers)
+    const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
-// app.get('/get-follower-users', async (req, resp) =>{
-//     // const laboratoryAbbreviation = req.params("laboratory_abbreviation");
-//     // const teamAbbreviation = req.params("team_abbreviation");
-//     // const {laboratoryAbbreviation, teamAbbreviation} = {"LTI","TOA"}
-//     const laboratoryAbbreviation = 'LTI';
-//     const teamAbbreviation = 'TOA'
-//     console.log(laboratoryAbbreviation, teamAbbreviation)
-//     const followedUsers = await FollowedUser.find();
-//     console.log('followed users are : '+followedUsers)
-//     const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
-//     console.log('followed users are : '+followedUsersIds)
-//
-//     if (!laboratoryAbbreviation && !teamAbbreviation) {
-//         resp.status(200).send(await FollowedUser.find());
-//     }
-//
-//     if (laboratoryAbbreviation) {
-//         const laboratory = await Laboratory.findOne({
-//             // abbreviation: req.param("laboratory_abbreviation"),
-//             abbreviation : laboratoryAbbreviation
-//         });
-//         console.log(laboratory)
-//
-//
-//         const teams = await Team.find({
-//             laboratory_id: laboratory._id,
-//         });
-//
-//         const teamsMemberShips = await Promise.all(
-//             teams.map((team) =>
-//                 TeamMemberShip.find({
-//                     team_id: team._id,
-//                     active: true,
-//                     user_id: { $in: followedUsersIds },
-//                 })
-//             )
-//         );
-//
-//         const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => FollowedUser.findOne({ user_id })));
-//
-//         const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
-//
-//         const result = followedUsersAcounts.map(({ firstName, lastName, roles,profilePicture }, index) => ({
-//             ...followedUsers[index]._doc,
-//             firstName,
-//             lastName,
-//             roles,
-//             profilePicture
-//         }));
-//         resp.status(200).send(result);
-//     }
-//
-//     if (teamAbbreviation) {
-//         const team = await Team.findOne({
-//             abbreviation: teamAbbreviation,
-//         });
-//
-//         const teamsMemberShips = await TeamMemberShip.find({
-//             team_id: team._id,
-//             active: true,
-//             user_id: { $in: followedUsersIds },
-//         });
-//
-//         const followedUsers = await Promise.all(teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id })));
-//
-//         const followedUsersAcounts = await Promise.all(teamsMemberShips.map(({ user_id }) => User.findById(user_id)));
-//
-//         const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
-//             ...followedUsers[index]._doc,
-//             firstName,
-//             lastName,
-//         }));
-//         resp.status(200).send(result);
-//     }
-// })
+    if (!laboratoryAbbreviation && !teamAbbreviation) {
+        resp.status(200).send(await FollowedUser.find());
+    }
+
+    if (laboratoryAbbreviation) {
+        const laboratory = await Laboratory.findOne({
+            abbreviation: req.param("laboratory_abbreviation"),
+        });
+
+        const teams = await Team.find({
+            laboratory_id: laboratory._id,
+        });
+
+        const teamsMemberShips = await Promise.all(
+            teams.map((team) =>
+                TeamMemberShip.find({
+                    team_id: team._id,
+                    active: true,
+                    user_id: { $in: followedUsersIds },
+                })
+            )
+        );
+
+        const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => FollowedUser.findOne({ user_id })));
+
+        const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
+
+        const result = followedUsersAcounts.map(({ firstName, lastName, roles,profilePicture }, index) => ({
+            ...followedUsers[index]._doc,
+            firstName,
+            lastName,
+            roles,
+            profilePicture
+        }));
+        resp.status(200).send(result);
+    }
+
+    if (teamAbbreviation) {
+        const team = await Team.findOne({
+            abbreviation: teamAbbreviation,
+        });
+
+        const teamsMemberShips = await TeamMemberShip.find({
+            team_id: team._id,
+            active: true,
+            user_id: { $in: followedUsersIds },
+        });
+
+        const followedUsers = await Promise.all(teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id })));
+
+        const followedUsersAcounts = await Promise.all(teamsMemberShips.map(({ user_id }) => User.findById(user_id)));
+
+        const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
+            ...followedUsers[index]._doc,
+            firstName,
+            lastName,
+        }));
+        resp.status(200).send(result);
+    }
+})
