@@ -400,10 +400,10 @@ exports.updateCitation = async (req, resp) => {
 
 
 exports.addSJR = async ( req, resp)=>{
-  const {id,IF,SJR,title } = req.body;
+  const {id,year,SJR,title } = req.body;
   
   try{
-    const response = await FollowedUser.updateOne({"publications.title":title},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
+    const response = await FollowedUser.updateOne({"publications.title":title,"publication.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
     console.log("=====================================")
     console.log(response);
     resp.status(200).send(response);
