@@ -206,9 +206,9 @@ app.get('/get-followed-users',async (req, resp) => {
 
 app.get('/prof/scopus/:authorId',async (req, res) =>{
     const {authorId} = req.params
+    const browser = await getBrowser();
+    const page = await browser.newPage();
     try {
-        const browser = await getBrowser();
-        const page = await browser.newPage();
         // Définir l'en-tête User-Agent personnalisé
         await page.setUserAgent('Chrome/96.0.4664.93');
         await page.setDefaultNavigationTimeout(85000);
@@ -300,8 +300,9 @@ app.get('/prof/scopus/:authorId',async (req, res) =>{
         console.error('Une erreur s\'est produite :', error);
     }
     finally {
-        let pages = await browser.pages();
-        await Promise.all(pages.map(page =>page.close()));
+        // let pages = await browser.pages();
+        // await Promise.all(pages.map(page =>page.close()));
+        await page.close()
         await browser.close()
     }
 })
