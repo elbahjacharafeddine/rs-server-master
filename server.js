@@ -196,6 +196,7 @@ app.get('/get-followed-users',async (req, resp) => {
                 channel.assertQueue('elbahja_cle',{durable:false})
                 const results = JSON.stringify(r)
                 channel.sendToQueue('elbahja_cle', Buffer.from(results))
+                console.log("data has been sent with success ....")
             })
         })
 
