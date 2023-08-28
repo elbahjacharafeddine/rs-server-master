@@ -79,21 +79,6 @@ app.get('/migrate-database', (req,res) =>{
         res.send(`migration is working`);
     });
 })
-app.get('/update/:journalName/:year/:sjr', async (req, res) => {
-    try {
-        const { journalName, year, sjr } = req.params;
-
-        const users = await UserModel.find().limit(5)
-
-        console.log(journalName + "/" + year + "/" + sjr);
-
-        // Send a JSON response with the retrieved users
-        res.json(users);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 
 
 const amqp = require('amqplib/callback_api')
@@ -103,30 +88,30 @@ const Team = require("./models/team");
 const TeamMemberShip = require("./models/team-membership");
 const User = require("./models/user");
 const {response} = require("express");
-const axios = require("axios");
+const {post} = require("axios");
 // app.get('/listen-to-rabbit',(req, res) =>{
 
-    amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
-        if (error0){
-            throw error0
-        }
-        console.log("connected to RabbitMQ from rs-backend ...")
-        connection.createChannel((error1, channel) =>{
-            if (error1) {
-                throw error1
-            }
-            console.log('try to read the message')
-            channel.assertQueue('elbahja_cle',{durable:false})
-            channel.consume('elbahja_cle', (message) =>{
-                // const jsonList = message.content.toString(); // Convertir l'objet Buffer en chaîne
-                // const listOfObjects = JSON.parse(jsonList);
-                console.log(message.content.toString('utf8'));
-                // res.send(message.content.toString('utf-8'))
-                channel.ack(message);
-            })
-        })
-    })
-// })
+//     amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
+//         if (error0){
+//             throw error0
+//         }
+//         console.log("connected to RabbitMQ from rs-backend ...")
+//         connection.createChannel((error1, channel) =>{
+//             if (error1) {
+//                 throw error1
+//             }
+//             console.log('try to read the message')
+//             channel.assertQueue('elbahja_cle',{durable:false})
+//             channel.consume('elbahja_cle', (message) =>{
+//                 // const jsonList = message.content.toString(); // Convertir l'objet Buffer en chaîne
+//                 // const listOfObjects = JSON.parse(jsonList);
+//                 console.log(message.content.toString('utf8'));
+//                 // res.send(message.content.toString('utf-8'))
+//                 channel.ack(message);
+//             })
+//         })
+//     })
+// // })
 
 
 
@@ -134,13 +119,13 @@ const axios = require("axios");
 
 app.get('/get-followed-users',async (req, resp) => {
     const laboratoryAbbreviation = "LTI"
-    const teamAbbreviation = undefined;
-    console.log("laboratoryAbbreviation is :"+ laboratoryAbbreviation)
-    console.log("teamAbbreviation is :"+ teamAbbreviation)
+    const teamAbbreviation = "TOA";
+    console.log("laboratoryAbbreviation is :" + laboratoryAbbreviation)
+    console.log("teamAbbreviation is :" + teamAbbreviation)
 
     const followedUsers = await FollowedUser.find();
     // console.log('followed user are :' +followedUsers)
-    const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
+    const followedUsersIds = followedUsers.map(({user_id}) => user_id);
 
     if (!laboratoryAbbreviation && !teamAbbreviation) {
         resp.status(200).send(await FollowedUser.find());
@@ -148,7 +133,7 @@ app.get('/get-followed-users',async (req, resp) => {
 
     if (laboratoryAbbreviation) {
         const laboratory = await Laboratory.findOne({
-            abbreviation: req.param("laboratory_abbreviation"),
+            abbreviation: laboratoryAbbreviation,
         });
 
         const teams = await Team.find({
@@ -160,31 +145,39 @@ app.get('/get-followed-users',async (req, resp) => {
                 TeamMemberShip.find({
                     team_id: team._id,
                     active: true,
-                    user_id: { $in: followedUsersIds },
+                    user_id: {$in: followedUsersIds},
                 })
             )
         );
 
-        const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => FollowedUser.findOne({ user_id })));
+        const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({user_id}) => FollowedUser.findOne({user_id})));
 
-        const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
+        const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({user_id}) => User.findById(user_id)));
 
-        const result = followedUsersAcounts.map(({ firstName, lastName, roles,profilePicture }, index) => ({
+        const result = followedUsersAcounts.map(({firstName, lastName, roles, profilePicture}, index) => ({
             ...followedUsers[index]._doc,
             firstName,
             lastName,
             roles,
             profilePicture
         }));
-        const responseForScarping = await axios.post('http://localhost:2000/data-followed-users',result)
-        if (responseForScarping){
+        const r = result.map((e, i) => ({
+            authorId: e.authorId,
+            firstName: e.firstName,
+            lastName: e.lastName,
+            user_id: e.user_id,
+            roles: e.roles,
+        }));
+        const responseForScarping = await post('http://localhost:2000/data-followed-users', result)
+        if (responseForScarping) {
             console.log("the response for rs-scraper has been sent with success")
-        }
-        resp.status(200).send(result);
-    }
-}
-)
+            // }
+            resp.send(r)
 
+        }
+
+    }
+})
 
 async function sendRequest(options){
     let result =''
