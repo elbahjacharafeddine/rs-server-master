@@ -234,9 +234,15 @@ exports.getFollowedUsers = async (req, resp) => {
 
     resp.status(200).send(result);
 
-    const responseForScarping = await axios.post('https://rs-scraper-master.onrender.com/data-followed-users',result)
-    if (responseForScarping){
-      console.log("the response for rs-scraper has been sent with success")
+    try{
+      const responseForScarping = await axios.post('https://rs-scraper-master.onrender.com/data-followed-users',result)
+      if (responseForScarping){
+        console.log("the response for rs-scraper has been sent with success")
+      }
+      else {
+        console.log("error with rs-scraper")}
+    } catch (e) {
+      console.log("error in connection with rs-scraper")
     }
   }
 
