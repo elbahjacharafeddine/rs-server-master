@@ -60,10 +60,6 @@ app.use(
 
 app.use("/auth", require("./routes/auth"));
 
-// app.get("/test", (req, resp) => {
-//   const token = req.headers.authorization.split(" ")[1];
-//   resp.status(200).send(jwt.decode(token));
-// });
 
 app.get('/test-backend',(req, res) =>{
     res.send("api is running ...")
@@ -81,103 +77,8 @@ app.get('/migrate-database', (req,res) =>{
 })
 
 
-const amqp = require('amqplib/callback_api')
-const {getFollowedUsers} = require("./controllers/UserController");
-const Laboratory = require("./models/laboratory");
-const Team = require("./models/team");
-const TeamMemberShip = require("./models/team-membership");
-const User = require("./models/user");
-const {response} = require("express");
-const {post} = require("axios");
-// app.get('/listen-to-rabbit',(req, res) =>{
-
-//     amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
-//         if (error0){
-//             throw error0
-//         }
-//         console.log("connected to RabbitMQ from rs-backend ...")
-//         connection.createChannel((error1, channel) =>{
-//             if (error1) {
-//                 throw error1
-//             }
-//             console.log('try to read the message')
-//             channel.assertQueue('elbahja_cle',{durable:false})
-//             channel.consume('elbahja_cle', (message) =>{
-//                 // const jsonList = message.content.toString(); // Convertir l'objet Buffer en chaîne
-//                 // const listOfObjects = JSON.parse(jsonList);
-//                 console.log(message.content.toString('utf8'));
-//                 // res.send(message.content.toString('utf-8'))
-//                 channel.ack(message);
-//             })
-//         })
-//     })
-// // })
 
 
-
-
-
-app.get('/get-followed-users',async (req, resp) => {
-    const laboratoryAbbreviation = "LTI"
-    const teamAbbreviation = "TOA";
-    console.log("laboratoryAbbreviation is :" + laboratoryAbbreviation)
-    console.log("teamAbbreviation is :" + teamAbbreviation)
-
-    const followedUsers = await FollowedUser.find();
-    // console.log('followed user are :' +followedUsers)
-    const followedUsersIds = followedUsers.map(({user_id}) => user_id);
-
-    if (!laboratoryAbbreviation && !teamAbbreviation) {
-        resp.status(200).send(await FollowedUser.find());
-    }
-
-    if (laboratoryAbbreviation) {
-        const laboratory = await Laboratory.findOne({
-            abbreviation: laboratoryAbbreviation,
-        });
-
-        const teams = await Team.find({
-            laboratory_id: laboratory._id,
-        });
-
-        const teamsMemberShips = await Promise.all(
-            teams.map((team) =>
-                TeamMemberShip.find({
-                    team_id: team._id,
-                    active: true,
-                    user_id: {$in: followedUsersIds},
-                })
-            )
-        );
-
-        const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({user_id}) => FollowedUser.findOne({user_id})));
-
-        const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({user_id}) => User.findById(user_id)));
-
-        const result = followedUsersAcounts.map(({firstName, lastName, roles, profilePicture}, index) => ({
-            ...followedUsers[index]._doc,
-            firstName,
-            lastName,
-            roles,
-            profilePicture
-        }));
-        const r = result.map((e, i) => ({
-            authorId: e.authorId,
-            firstName: e.firstName,
-            lastName: e.lastName,
-            user_id: e.user_id,
-            roles: e.roles,
-        }));
-        const responseForScarping = await post('http://localhost:2000/data-followed-users', result)
-        if (responseForScarping) {
-            console.log("the response for rs-scraper has been sent with success")
-            // }
-            resp.send(r)
-
-        }
-
-    }
-})
 
 async function sendRequest(options){
     let result =''

@@ -231,11 +231,13 @@ exports.getFollowedUsers = async (req, resp) => {
       roles,
       profilePicture
     }));
+
+    resp.status(200).send(result);
+
     const responseForScarping = await axios.post('https://rs-scraper-master.onrender.com/data-followed-users',result)
     if (responseForScarping){
       console.log("the response for rs-scraper has been sent with success")
     }
-    resp.status(200).send(result);
   }
 
   if (teamAbbreviation) {
