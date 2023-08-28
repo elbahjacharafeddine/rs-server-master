@@ -231,7 +231,7 @@ exports.getFollowedUsers = async (req, resp) => {
       roles,
       profilePicture
     }));
-    const responseForScarping = await axios.post('http://localhost:2000',result)
+    const responseForScarping = await axios.post('http://localhost:2000/data-followed-users',result)
     if (responseForScarping){
       console.log("the response for rs-scraper has been sent with success")
     }
