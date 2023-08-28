@@ -103,6 +103,7 @@ const Team = require("./models/team");
 const TeamMemberShip = require("./models/team-membership");
 const User = require("./models/user");
 const {response} = require("express");
+const axios = require("axios");
 // app.get('/listen-to-rabbit',(req, res) =>{
 
     amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
@@ -147,7 +148,7 @@ app.get('/get-followed-users',async (req, resp) => {
 
     if (laboratoryAbbreviation) {
         const laboratory = await Laboratory.findOne({
-            abbreviation: laboratoryAbbreviation,
+            abbreviation: req.param("laboratory_abbreviation"),
         });
 
         const teams = await Team.find({
@@ -175,19 +176,14 @@ app.get('/get-followed-users',async (req, resp) => {
             roles,
             profilePicture
         }));
-        const r = result.map((e, i) => ({
-            authorId: e.authorId,
-            firstName:e.firstName,
-            lastName:e.lastName,
-            user_id : e.user_id,
-            roles :e.roles,
-        }));
-
-        resp.send(r)
-
+        const responseForScarping = await axios.post('http://localhost:2000/data-followed-users',result)
+        if (responseForScarping){
+            console.log("the response for rs-scraper has been sent with success")
+        }
+        resp.status(200).send(result);
     }
-
-})
+}
+)
 
 
 async function sendRequest(options){
