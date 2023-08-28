@@ -183,23 +183,7 @@ app.get('/get-followed-users',async (req, resp) => {
             roles :e.roles,
         }));
 
-        amqp.connect('amqps://sosytgab:jPleCfcPHfayJEgRoLXeDgVgyt3aBd_0@rattlesnake.rmq.cloudamqp.com/sosytgab',(error0,connection) =>{
-            if (error0){
-                throw error0
-            }
-            console.log("connected to RabbitMQ from rs-backend ...")
-            connection.createChannel((error1, channel) =>{
-                if (error1) {
-                    throw error1
-                }
-                console.log("Canal has created ...")
-                channel.assertQueue('elbahja_cle',{durable:false})
-                const results = JSON.stringify(r)
-                channel.sendToQueue('elbahja_cle', Buffer.from(results))
-                console.log("data has been sent with success ....")
-            })
-        })
-
+        resp.send(r)
 
     }
 
