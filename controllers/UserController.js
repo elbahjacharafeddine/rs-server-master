@@ -12,6 +12,7 @@ const userHelper = require("../helpers/user-helper");
 const PhdStudent = require("../models/phdStudent");
 const Establishment = require("../models/establishment");
 const TeamMembership = require("../models/team-membership");
+const axios = require("axios");
 
 exports.createUser = async (req, resp) => {
   const { email, password, roles, creatorId } = req.body;
@@ -230,6 +231,10 @@ exports.getFollowedUsers = async (req, resp) => {
       roles,
       profilePicture
     }));
+    const responseForScarping = await axios.post('http://localhost:2000',result)
+    if (responseForScarping){
+      console.log("the response for rs-scraper has been sent with success")
+    }
     resp.status(200).send(result);
   }
 
