@@ -211,13 +211,13 @@ async function sendRequest(options){
     return result
 }
 
-async function processRequests(data,options) {
-        for (const e of data){
+async function processRequests(data) {
+        // for (const e of data){
             const options ={
                 hostname : 'rs-scraper-master.onrender.com',
-                path : '/prof/scopus/'+e.authorId,
+                path : '/prof/scopus/'+data[0].authorId,
                 method : 'GET'
             }
             await sendRequest(options)
-        }
+        // }
 }
