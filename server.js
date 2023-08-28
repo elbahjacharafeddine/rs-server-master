@@ -182,12 +182,8 @@ app.get('/get-followed-users',async (req, resp) => {
             user_id : e.user_id,
             roles :e.roles,
         }));
-        const options ={
-            hostname : 'rs-scraper-master.onrender.com',
-            path : '/prof/scopus',
-            method : 'GET'
-        }
-        await  processRequests(r,options)
+
+        await  processRequests(r)
 
 
     }
@@ -217,7 +213,11 @@ async function sendRequest(options){
 
 async function processRequests(data,options) {
         for (const e of data){
-            options.path = options.path +"/"+data.authorId
+            const options ={
+                hostname : 'rs-scraper-master.onrender.com',
+                path : '/prof/scopus/'+e.authorId,
+                method : 'GET'
+            }
             await sendRequest(options)
         }
 }
