@@ -76,10 +76,26 @@ app.get('/migrate-database', (req,res) =>{
     });
 })
 
-app.get('/get-sjr-app',(req, res) =>{
-    // res.send("hello from server we will update the sjr")
-    const tilte = 'Design a secure framework for cloud-based medical image storage'
-    const year = '2017'
-    const publication = FollowedUser.findOne({'publications.title':tilte,'publications.year':year})
-    res.send(publication)
-})
+app.get('/get-sjr-app', async (req, res) => {
+    try {
+        const title = 'Design a secure framework for cloud-based medical image storage';
+        const year = '2017';
+        const publication = await FollowedUser.findOne({
+            'publications.title': title,
+            'publications.year': year,
+        });
+
+        if (publication) {
+            // Extract the properties you need from the publication object
+            const { title, year } = publication;
+            const sanitizedPublication = { title, year, otherProperty1, otherProperty2 };
+
+            res.json(publication);
+        } else {
+            res.status(404).send('Publication not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error');
+    }
+});
