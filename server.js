@@ -76,37 +76,6 @@ app.get('/migrate-database', (req,res) =>{
     });
 })
 
-
-
-
-
-async function sendRequest(options){
-    let result =''
-        const request = https.request(options,response =>{
-            response.on('data', chunk => {
-                result += chunk;
-            });
-
-            response.on('end', () => {
-                result = JSON.parse(result)
-            });
-        })
-    request.on('error', error => {
-        console.error("error for scraping data");
-    });
-
-    request.end();
-    console.log("result of this author "+ options.path + " :"+result)
-    return result
-}
-
-async function processRequests(data) {
-        // for (const e of data){
-            const options ={
-                hostname : 'rs-scraper-master.onrender.com',
-                path : '/prof/scopus/'+data[0].authorId,
-                method : 'GET'
-            }
-            await sendRequest(options)
-        // }
-}
+app.get('/get-sjr-app',(req, res) =>{
+    res.send("hello from server we will update the sjr")
+})
