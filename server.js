@@ -77,7 +77,7 @@ app.get('/migrate-database', (req,res) =>{
 })
 
 app.get('/get-sjr-app',(req, res) =>{
-    res.send("hello from server we will update the sjr")
+    // res.send("hello from server we will update the sjr")
     const tilte = 'Design a secure framework for cloud-based medical image storage'
     const year = '2017'
     const publication = FollowedUser.findOne({'publications.title':tilte,'publications.year':year})
