@@ -87,8 +87,7 @@ app.get('/get-sjr-app', async (req, res) => {
 
         if (publication) {
             // Extract the properties you need from the publication object
-            const { title, year } = publication;
-            const sanitizedPublication = { title, year, otherProperty1, otherProperty2 };
+
 
             res.json(publication);
         } else {
