@@ -411,6 +411,8 @@ exports.addSJR = async ( req, resp)=>{
   
   try{
     console.log(title,year,SJR)
+    const publication = await FollowedUser.find({'publications.title':title,'publications.year':year})
+    console.log(publication)
     const response = await FollowedUser.updateMany({"publications.title":title, "publications.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
     const ress = await FollowedUser.find({"user_id":id,"publications.title":title, "publication.year":year})
     console.log("=====================================")
