@@ -87,7 +87,7 @@ app.get('/get-sjr-app', async (req, res) => {
         });
 
         if (publication) {
-            res.json(publication.publications);
+            res.json(publication);
         } else {
             res.status(404).send('Publication not found');
         }
