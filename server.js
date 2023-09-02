@@ -66,6 +66,7 @@ app.get('/test-backend',(req, res) =>{
 })
 
 const { exec } = require('child_process');
+const {Publication} = require("./models/publication");
 app.get('/migrate-database', (req,res) =>{
     exec('node ./seeds/seed.js', (error, stdout, stderr) => {
         if (error) {
@@ -80,15 +81,12 @@ app.get('/get-sjr-app', async (req, res) => {
     try {
         const title = 'Design a secure framework for cloud-based medical image storage';
         const year = '2017';
-        const publication = await FollowedUser.findOne({
-            'publications.title': title,
-            'publications.year': year,
+        const publication = await Publication.findOne({
+            'title': title,
+            'year': year,
         });
 
         if (publication) {
-            // Extract the properties you need from the publication object
-
-
             res.json(publication);
         } else {
             res.status(404).send('Publication not found');
