@@ -417,7 +417,7 @@ exports.addSJR = async ( req, resp)=>{
     const ress = await FollowedUser.find({"user_id":id,"publications.title":title, "publication.year":year})
     console.log("=====================================")
     console.log(response);
-    resp.status(200).send(ress);
+    resp.status(200).send(publication);
   }catch(error){
     console.log(error);
     resp.status(500).send(error);
