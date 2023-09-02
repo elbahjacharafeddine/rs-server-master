@@ -407,16 +407,15 @@ exports.updateCitation = async (req, resp) => {
 
 
 exports.addSJR = async ( req, resp)=>{
-  const {id,year,SJR,title } = req.body;
+  const {year,SJR,title,source } = req.body;
   
   try{
-    console.log(title,year,SJR)
-    const publication = await FollowedUser.find({'publications.title':title,'publications.year':year})
+    console.log(title,source,year,SJR)
+    const publication = await FollowedUser.findOneAndUpdate({'publications.source':source,'publications.year':year})
     console.log(publication)
-    const response = await FollowedUser.updateMany({"publications.title":title, "publications.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
-    const ress = await FollowedUser.find({"user_id":id,"publications.title":title, "publication.year":year})
+    // const response = await FollowedUser.updateOne({"publications.title":title, "publications.year":year},{$set:{"publications.$.SJR":SJR,"publications.$.searchedFor":true}});
     console.log("=====================================")
-    console.log(response);
+    // console.log(response);
     resp.status(200).send(publication);
   }catch(error){
     console.log(error);
