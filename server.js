@@ -81,13 +81,13 @@ app.get('/get-sjr-app', async (req, res) => {
     try {
         const title = 'Design a secure framework for cloud-based medical image storage';
         const year = '2017';
-        const publication = await Publication.findOne({
+        const publication = await FollowedUser.findOne({
             'title': title,
             'year': year,
         });
 
         if (publication) {
-            res.json(publication);
+            res.json(publication.publications);
         } else {
             res.status(404).send('Publication not found');
         }
