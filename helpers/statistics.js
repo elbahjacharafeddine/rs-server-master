@@ -90,32 +90,26 @@ exports.getStatistics = async (req, resp) => {
   const laboratoryAbbreviation = req.param("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
 
-  const followedUsers = await getFollowedUsers({
-    laboratoryAbbreviation,
-    teamAbbreviation,
-  });
 
-//   const followedUsersStatistics = followedUsers.map(
-//     ({ firstName, lastName, publications, profilePicture, ...user }) => {
-//       const yearlyPublications = publications
-//         .map((publication) => publication.year)
-//         .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
-//       const titles =  publications
-//       .map((publication) => publication.title);
-//      const uniqueSet = new Set(titles);
-// const backToarray = [...uniqueSet];
-//       return {
-//         name: firstName + " " + lastName,
-//         profilePicture,
-//         yearlyPublications,
-//         publications,
-//         backToarray,
-//       };
-//     }
-//   );
-//
-//   resp.status(200).send(followedUsersStatistics);
-    resp.status(200).send(followedUsers)
+    const followedUsers = await FollowedUser.find();
+    const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
+
+    const labo = await Laboratory.findOne({abbreviation: laboratoryAbbreviation,})
+    const teams = await Team.find({
+        laboratory_id: labo._id,
+    });
+
+    const teamsMemberShips = await Promise.all(
+        teams.map((team) =>
+            TeamMemberShip.find({
+                team_id: team._id,
+                active: true,
+                user_id: { $in: followedUsersIds },
+            })
+        )
+    );
+
+    resp.status(200).send(teamsMemberShips)
 };
 
 exports.getPublicationsPerTeamPerYear = async (req, resp) => {
