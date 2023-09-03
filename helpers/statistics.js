@@ -91,7 +91,7 @@ exports.getStatistics = async (req, resp) => {
   const teamAbbreviation = req.param("team_abbreviation");
 
 
-    const followedUsers = await FollowedUser.find();
+    const followedUsers = await getFollowedUsers(laboratoryAbbreviation,teamAbbreviation)
     const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
     const labo = await Laboratory.findOne({abbreviation: laboratoryAbbreviation,})
