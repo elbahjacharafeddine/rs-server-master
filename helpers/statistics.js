@@ -109,7 +109,7 @@ exports.getStatistics = async (req, resp) => {
         )
     );
 
-    resp.status(200).send(teamsMemberShips)
+    resp.status(200).json(teamsMemberShips)
 };
 
 exports.getPublicationsPerTeamPerYear = async (req, resp) => {
