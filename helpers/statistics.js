@@ -110,6 +110,7 @@ const backToarray = [...uniqueSet];
         yearlyPublications,
         publications,
         backToarray,
+          labo:laboratoryAbbreviation
       };
     }
   );
