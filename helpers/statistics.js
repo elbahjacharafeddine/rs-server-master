@@ -105,12 +105,12 @@ exports.getStatistics = async (req, resp) => {
      const uniqueSet = new Set(titles);
 const backToarray = [...uniqueSet];
       return {
-        name: firstName + " " + lastName,
-        profilePicture,
-        yearlyPublications,
-        publications,
-        backToarray,
-          labo:laboratoryAbbreviation
+          labo:laboratoryAbbreviation,
+          name: firstName + " " + lastName,
+          profilePicture,
+          yearlyPublications,
+          publications,
+          backToarray,
       };
     }
   );
