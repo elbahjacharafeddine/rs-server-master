@@ -95,26 +95,27 @@ exports.getStatistics = async (req, resp) => {
     teamAbbreviation,
   });
 
-  const followedUsersStatistics = followedUsers.map(
-    ({ firstName, lastName, publications, profilePicture, ...user }) => {
-      const yearlyPublications = publications
-        .map((publication) => publication.year)
-        .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
-      const titles =  publications
-      .map((publication) => publication.title);
-     const uniqueSet = new Set(titles);
-const backToarray = [...uniqueSet];
-      return {
-        name: firstName + " " + lastName,
-        profilePicture,
-        yearlyPublications,
-        publications,
-        backToarray,
-      };
-    }
-  );
-
-  resp.status(200).send(followedUsersStatistics);
+//   const followedUsersStatistics = followedUsers.map(
+//     ({ firstName, lastName, publications, profilePicture, ...user }) => {
+//       const yearlyPublications = publications
+//         .map((publication) => publication.year)
+//         .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
+//       const titles =  publications
+//       .map((publication) => publication.title);
+//      const uniqueSet = new Set(titles);
+// const backToarray = [...uniqueSet];
+//       return {
+//         name: firstName + " " + lastName,
+//         profilePicture,
+//         yearlyPublications,
+//         publications,
+//         backToarray,
+//       };
+//     }
+//   );
+//
+//   resp.status(200).send(followedUsersStatistics);
+    resp.status(200).send(followedUsers)
 };
 
 exports.getPublicationsPerTeamPerYear = async (req, resp) => {
