@@ -108,8 +108,8 @@ exports.getStatistics = async (req, resp) => {
             })
         )
     );
-
-    resp.status(200).json(teamsMemberShips)
+    console.log(teamsMemberShips)
+    resp.status(200).send(followedUsers)
 };
 
 exports.getPublicationsPerTeamPerYear = async (req, resp) => {
