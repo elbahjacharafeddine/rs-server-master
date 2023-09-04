@@ -93,7 +93,7 @@ exports.getStatistics = async (req, resp) => {
     console.log("hi hi i am "+teamAbbreviation)
 
     const followedUsers = await getFollowedUsers({
-        laboratoryAbbreviation,
+        undefined,
         teamAbbreviation,
     });
 
@@ -107,7 +107,7 @@ exports.getStatistics = async (req, resp) => {
      const uniqueSet = new Set(titles);
 const backToarray = [...uniqueSet];
       return {
-            team: laboratoryAbbreviation,
+            team: teamAbbreviation,
           name: firstName + " " + lastName,
           laboratory: laboratoryAbbreviation,
           profilePicture,
