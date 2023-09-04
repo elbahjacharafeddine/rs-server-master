@@ -105,8 +105,8 @@ exports.getStatistics = async (req, resp) => {
      const uniqueSet = new Set(titles);
 const backToarray = [...uniqueSet];
       return {
-
-          // name: firstName + " " + lastName,
+            laboratory: laboratoryAbbreviation,
+          name: firstName + " " + lastName,
           profilePicture,
           yearlyPublications,
           publications,
