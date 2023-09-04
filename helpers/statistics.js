@@ -87,9 +87,10 @@ const getFollowedUsers = async (query) => {
 };
 
 exports.getStatistics = async (req, resp) => {
-  const laboratoryAbbreviation = req.param("laboratory_abbreviation");
+  const laboratoryAbbreviation = req.params("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
     console.log("hi i am "+laboratoryAbbreviation)
+    console.log("hi hi i am "+teamAbbreviation)
 
     const followedUsers = await getFollowedUsers({
         laboratoryAbbreviation,
