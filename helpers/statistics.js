@@ -106,7 +106,8 @@ exports.getStatistics = async (req, resp) => {
 const backToarray = [...uniqueSet];
       return {
             // laboratory: laboratoryAbbreviation,
-          laboratory: firstName + " " + lastName,
+          // name: firstName + " " + lastName,
+          laboratory: laboratoryAbbreviation,
           profilePicture,
           yearlyPublications,
           publications,
