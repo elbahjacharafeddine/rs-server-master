@@ -107,7 +107,7 @@ const backToarray = [...uniqueSet];
       return {
             // laboratory: laboratoryAbbreviation,
           // name: firstName + " " + lastName,
-          laboratory: laboratoryAbbreviation,
+          laboratory: laboratoryAbbreviation.laboratoryAbbreviation,
           profilePicture,
           yearlyPublications,
           publications,
