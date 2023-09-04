@@ -89,6 +89,7 @@ const getFollowedUsers = async (query) => {
 exports.getStatistics = async (req, resp) => {
   const laboratoryAbbreviation = req.param("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
+    console.log("hi i am "+laboratoryAbbreviation)
 
     const followedUsers = await getFollowedUsers({
         laboratoryAbbreviation,
@@ -107,7 +108,7 @@ const backToarray = [...uniqueSet];
       return {
             // laboratory: laboratoryAbbreviation,
           // name: firstName + " " + lastName,
-          laboratory: laboratoryAbbreviation.laboratoryAbbreviation,
+          laboratory: laboratoryAbbreviation,
           profilePicture,
           yearlyPublications,
           publications,
